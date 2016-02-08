@@ -152,7 +152,7 @@ class DragonBot:
         Interval_Timer = 60
         def Start_Timer():
             def Send_Message(Send_Message_Scheduler): 
-                self._client.send_message(mto = room, mbody = " ", mtype = "groupchat")
+                self._client.send_message(mto = room, mbody = "", mtype = "groupchat")
                 Send_Message_Scheduler.enter(Interval_Timer, 1, Send_Message, (Send_Message_Scheduler,))
             Scheduler_Keep_Online.enter(Interval_Timer, 1, Send_Message, (Scheduler_Keep_Online,))
             Scheduler_Keep_Online.run()
