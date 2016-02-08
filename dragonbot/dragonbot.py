@@ -145,7 +145,21 @@ class DragonBot:
             self._client.send_message(mto = room.room_id,
                     mbody = text, mtype = "groupchat")
 
-    
+
+    def keep_alive(self, room):
+        import threading, sched, time
+        Scheduler_Keep_Online = sched.scheduler(time.time, time.sleep)
+        Interval_Timer = 60
+        def Start_Timer():
+            def Send_Message(Send_Message_Scheduler): 
+                self._client.send_message(mto = room, mbody = "", mtype = "groupchat")
+                Send_Message_Scheduler.enter(Interval_Timer, 1, Send_Message, (Send_Message_Scheduler,))
+            Scheduler_Keep_Online.enter(Interval_Timer, 1, Send_Message, (Scheduler_Keep_Online,))
+            Scheduler_Keep_Online.run()
+        Thread_Keep_Online=threading.Thread(target=Start_Timer)
+        Thread_Keep_Online.start()
+
+
     def start_shell(self):
 
         """Start the DragonBot REPL."""
@@ -194,6 +208,8 @@ class DragonBot:
 
         for room in self._jabber_rooms.values():
             self._client.plugin["xep_0045"].joinMUC(room, self.name(), wait = True)
+
+        self.keep_alive(room)
 
 
     def _client_receive(self, msg):
